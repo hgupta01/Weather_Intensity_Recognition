@@ -21,12 +21,14 @@ The code is built with following libraries:
 - [TensorboardX](https://github.com/lanpa/tensorboardX)
 - [tqdm](https://github.com/tqdm/tqdm.git)
 - [scikit-learn](https://scikit-learn.org/stable/)
+- [pytorchvideo](https://pytorchvideo.org/)
 
 For video data pre-processing, you may need [ffmpeg](https://www.ffmpeg.org/).
 
 ## Data Preparation
 Please follow the following steps for dataset preparation
 - Download the VARG dataset using [OSF link](https://osf.io/w6q3t/?view_only=5ff76f00497641a18059657fcd1efcf2) in git folder.
+    - select 'dataset' folder and click on 'Download as zip'.
 - Open terminal and run following commands to uncompress the dataset.
 ```bash
     find . -iname '*.zip' -exec sh -c 'unzip -o -d "${0%.*}" "$0"' '{}' ';'
