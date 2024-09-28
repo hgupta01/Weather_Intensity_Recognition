@@ -1,10 +1,10 @@
-import torchvision
-import random
-from PIL import Image, ImageOps
-import numpy as np
-import numbers
 import math
 import torch
+import random
+import numbers
+import torchvision
+import numpy as np
+from PIL import Image, ImageOps
 
 
 class GroupRandomCrop(object):
@@ -74,8 +74,28 @@ class GroupNormalize(object):
         # TODO: make efficient
         for t, m, s in zip(tensor, rep_mean, rep_std):
             t.sub_(m).div_(s)
-
         return tensor
+
+
+class GroupNormalizeCustom(torchvision.transforms.Normalize):
+    """
+    Normalize the (CTHW) video clip by mean subtraction and division by standard deviation
+
+    Args:
+        mean (3-tuple): pixel RGB mean
+        std (3-tuple): pixel RGB standard deviation
+        inplace (boolean): whether do in-place normalization
+    """
+
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        """
+        Args:
+            x (torch.Tensor): video tensor with shape (C, T, H, W).
+        """
+        vid = x.permute(1, 0, 2, 3)  # C T H W to T C H W
+        vid = super().forward(vid)
+        vid = vid.permute(1, 0, 2, 3)  # T C H W to C T H W
+        return vid
 
 
 class GroupScale(object):
@@ -327,6 +347,18 @@ class Stack(object):
                 return np.concatenate(img_group, axis=2)
 
 
+class StackCustom(object):
+    def __init__(self):
+        pass
+
+    def __call__(self, img_group):
+        if img_group[0].mode == 'L':
+            return np.concatenate([np.expand_dims(x, 2) for x in img_group], axis=2)
+        elif img_group[0].mode == 'RGB':
+            img_group = [np.array(img)[None, :, :, :] for img in img_group]
+            return np.concatenate(img_group, axis=0)
+
+
 class ToTorchFormatTensor(object):
     """ Converts a PIL.Image (RGB) or numpy.ndarray (H x W x C) in the range [0, 255]
     to a torch.FloatTensor of shape (C x H x W) in the range [0.0, 1.0] """
@@ -338,6 +370,28 @@ class ToTorchFormatTensor(object):
         if isinstance(pic, np.ndarray):
             # handle numpy array
             img = torch.from_numpy(pic).permute(2, 0, 1).contiguous()
+        else:
+            # handle PIL Image
+            img = torch.ByteTensor(
+                torch.ByteStorage.from_buffer(pic.tobytes()))
+            img = img.view(pic.size[1], pic.size[0], len(pic.mode))
+            # put it from HWC to CHW format
+            # yikes, this transpose takes 80% of the loading time/CPU
+            img = img.transpose(0, 1).transpose(0, 2).contiguous()
+        return img.float().div(255) if self.div else img.float()
+
+
+class ToTorchFormatTensorCustom(object):
+    """ Converts a PIL.Image (RGB) or numpy.ndarray (T x H x W x C) in the range [0, 255]
+    to a torch.FloatTensor of shape (C x T x H x W) in the range [0.0, 1.0] """
+
+    def __init__(self, div=True):
+        self.div = div
+
+    def __call__(self, pic):
+        if isinstance(pic, np.ndarray):
+            # handle numpy array
+            img = torch.from_numpy(pic).permute(3, 0, 1, 2).contiguous()
         else:
             # handle PIL Image
             img = torch.ByteTensor(

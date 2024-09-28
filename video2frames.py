@@ -1,20 +1,18 @@
 import os
 import cv2
-from tqdm import tqdm
+import numpy as np
 from pathlib import Path
-
+from tqdm.notebook import tqdm
 
 def vid2frames(vid_file, save_folder, prefix="{:03d}.jpg"):
     vidcap = cv2.VideoCapture(vid_file)
-    success, image = vidcap.read()
-    count = 1
-    success = True
-    while success:
-        cv2.imwrite(os.path.join(save_folder, prefix.format(count)),
-                    image)     # save frame as JPEG file
-        count += 1
-        success, image = vidcap.read()
-
+    num_frames = int(vidcap.get(cv2.CAP_PROP_FRAME_COUNT))
+    
+    for idx in range(num_frames):
+        ret, image = vidcap.read()
+        if ret:
+            cv2.imwrite(os.path.join(save_folder, prefix.format(idx)), image)     # save frame as JPEG file
+            
 
 if __name__ == '__main__':
     video_files = sorted(Path("dataset/videos/videos").glob("*.mp4"))

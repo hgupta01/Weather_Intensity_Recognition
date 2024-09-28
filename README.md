@@ -2,7 +2,7 @@
 
 ## Overview
 
-We provide the implementation used for the evaluation of VARG dataset. We used the TSM implementation and modified it to work with our custom dataset.
+We provide the implementation used for the evaluation of VARG dataset. We used the several deep learning based video classificatin models as backbone and implemented custom classification head.
 
 ## Content
 
@@ -19,6 +19,7 @@ The code is built with following libraries:
 - [PyTorch](https://pytorch.org/) 1.13 or higher
 - [OpenCV](https://opencv.org/)
 - [TensorboardX](https://github.com/lanpa/tensorboardX)
+- [Torchfitter](https://github.com/Xylambda/torchfitter)
 - [tqdm](https://github.com/tqdm/tqdm.git)
 - [scikit-learn](https://scikit-learn.org/stable/)
 - [pytorchvideo](https://pytorchvideo.org/)
@@ -38,17 +39,28 @@ Please follow the following steps for dataset preparation
 ```
 - Extract videos into frames for fast reading using following script. This step will take around half an hour
 ```bash
-    python varg_video2frames.py
+    python video2frames.py
 ```
-- Convert the labels in required format
+<!-- - Convert the labels in required format
 ```bash
     python varg_labels2TSMformat.py
-```
+``` -->
 
-Note that the naive implementation involves large data copying and increases memory consumption during training. It is suggested to use the **in-place** version of TSM to improve speed (see [ops/temporal_shift.py](ops/temporal_shift.py) Line 12 for the details.)
+Note that the naive implementation involves large data copying and increases memory consumption during training. 
+<!-- It is suggested to use the **in-place** version of TSM to improve speed (see [ops/temporal_shift.py](ops/temporal_shift.py) Line 12 for the details.) -->
 
-## Pretrained Weather Classification Models
-Download trained ResNet18 model for image weather classifications from [drive link](https://drive.google.com/drive/folders/1zMz1RTN28bSiL11ncZa6o09-HbkVVsI4?usp=drive_link) in 'base_trained_model' folder.
+## Pretrained Video Classification Models
+Download pre-trained video classification models weights:
+  - [SWIN-Tiny](https://github.com/SwinTransformer/storage/releases/download/v1.0.4/swin_tiny_patch244_window877_kinetics400_1k.pth)
+  - [TSM ResNet50](https://download.openmmlab.com/mmaction/v1.0/recognition/tsm/tsm_imagenet-pretrained-r50_8xb16-1x1x16-50e_kinetics400-rgb/tsm_imagenet-pretrained-r50_8xb16-1x1x16-50e_kinetics400-rgb_20220831-042b1748.pth)
+  - [MViTv2-S](https://dl.fbaipublicfiles.com/pyslowfast/model_zoo/mvitv2/pysf_video_models/MViTv2_S_16x4_k400_f302660347.pyth): model weights should be extarcted from the weight file using following command. 
+  ```bash
+  import torch
+  model_dict = torch.load("/path/to/mvit_pyth_file", map_location='cpu')
+  model = model_dict['model_state']
+  torch.save("pretrained/MViTv2_S.pth", model)
+  ```
+   <!-- for image weather classifications from [drive link](https://drive.google.com/drive/folders/1zMz1RTN28bSiL11ncZa6o09-HbkVVsI4?usp=drive_link) in 'base_trained_model' folder. -->
 
 ## Training 
 
@@ -90,13 +102,17 @@ python test.py --num_segments 8 --imgsz 224 --weights imagenet --weather snow --
 python test.py --num_segments 8 --imgsz 224 --weights weathernet --weather snow --arch Custom-resnet18
 ```
 
-## Citations
-We used the TSM code to evaluate VARG dataset
+## CREDITS
+  - [MMAction2](https://github.com/open-mmlab/mmaction2/tree/main)
+  - [SwinTransformer](https://github.com/SwinTransformer/Video-Swin-Transformer)
+  - [PyTorchVideo](https://github.com/facebookresearch/pytorchvideo/)
+  - [pyslowfast](https://github.com/facebookresearch/SlowFast/tree/main)
+<!-- We used the TSM code to evaluate VARG dataset
 ```
 @inproceedings{lin2019tsm,
   title={TSM: Temporal Shift Module for Efficient Video Understanding},
   author={Lin, Ji and Gan, Chuang and Han, Song},
   booktitle={Proceedings of the IEEE International Conference on Computer Vision},
   year={2019}
-} 
+}  -->
 ```

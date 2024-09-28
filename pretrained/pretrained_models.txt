@@ -1,0 +1,13 @@
+TSM ResNet50:  https://download.openmmlab.com/mmaction/v1.0/recognition/tsm/tsm_imagenet-pretrained-r50_8xb16-1x1x16-50e_kinetics400-rgb/tsm_imagenet-pretrained-r50_8xb16-1x1x16-50e_kinetics400-rgb_20220831-042b1748.pth
+
+SWIN-Tiny: https://github.com/SwinTransformer/storage/releases/download/v1.0.4/swin_tiny_patch244_window877_kinetics400_1k.pth
+
+MViT-S: https://dl.fbaipublicfiles.com/pyslowfast/model_zoo/mvitv2/pysf_video_models/MViTv2_S_16x4_k400_f302660347.pyth
+MViT-S is a dictionary from which model weights should be extracted:
+```
+import torch
+model_dict = torch.load("/path/to/pyth_file", map_location='cpu')
+model = model_dict['model_state']
+torch.save("pretrained/MViTv2_S.pth", model)
+``` 
+
