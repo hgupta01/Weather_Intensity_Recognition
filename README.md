@@ -28,7 +28,7 @@ For video data pre-processing, you may need [ffmpeg](https://www.ffmpeg.org/).
 
 ## Data Preparation
 Please follow the following steps for dataset preparation
-- Download and uncompress the VARG dataset using [drive link](https://osf.io/w6q3t/?view_only=5ff76f00497641a18059657fcd1efcf2) in git folder.
+- Download and uncompress the VARG dataset using [drive link](https://drive.google.com/file/d/15uOStChBDyxrHCICT7wIC3qwPuVxlBWa/view?usp=sharing) in git folder.
 
 - Extract videos into frames using following script (need for fast data loading). This step should take around half an hour
 ```bash
