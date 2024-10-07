@@ -18,9 +18,9 @@ __name2loss__ = {"multi_label": "WeatherDetMultiLabelLoss", "multi_class":"Weath
 def parse_args():
     parser = argparse.ArgumentParser()
     #model details
-    parser.add_argument("recognizer", default="Recognizer3D", type=str, choices=["Recognizer2D", "Recognizer3D"])
-    parser.add_argument("backbone", default="x3d", type=str, choices=["x3d", "i3d", "mvit", "swin", "tsm"])
-    parser.add_argument("head", default="mlh", type=str, choices=["mlh", "mcsh", "mcmh", "mcmha"])
+    parser.add_argument("--recognizer", default="Recognizer3D", type=str, choices=["Recognizer2D", "Recognizer3D"])
+    parser.add_argument("--backbone", default="x3d", type=str, choices=["x3d", "i3d", "mvit", "swin", "tsm"])
+    parser.add_argument("--head", default="mlh", type=str, choices=["mlh", "mcsh", "mcmh", "mcmha"])
     parser.add_argument("--num_labels", default=7, type=int)
     parser.add_argument("--dropout", default=0.5, type=float)
     parser.add_argument("--is_2d", action='store_true')
