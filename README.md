@@ -35,6 +35,7 @@ Please follow the following steps for dataset preparation
     python video2frames.py
 ```
 
+![Rain](example_clips/rain.gif) ![Fog](example_clips/fog.gif) ![Snow](example_clips/snow.gif)
 <!-- Note that the naive implementation involves large data copying and increases memory consumption during training.  -->
 <!-- It is suggested to use the **in-place** version of TSM to improve speed (see [ops/temporal_shift.py](ops/temporal_shift.py) Line 12 for the details.) -->
 
